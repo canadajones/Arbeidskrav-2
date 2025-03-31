@@ -22,23 +22,27 @@ C_r = 0.01
 slope = 0 # degrees
 g = 9.81 # m/s²
 
-# Parameters
-T = 120 #s
+# Time parameters
+T = 300 #s
 dt = 0.01 #s
 N = maths.ceil(T / dt) # ticks
 
+# Regulation parameters
 
 v_target_kmh = 70 # km/h
 v_target = v_target_kmh / 3.6
-
-v_0 = v_target # m/s
-u_0 = 0 # N
-
 Kc = 2129 
 Ti = 2.0 # s
 
-Kp = 0.6 # proportional coefficient
-Ki = 0.1 # integral coefficient
+Kp = 1.2 # proportional coefficient
+Ki = 0.5 # integral coefficient
+Kd = 1 # derivative coefficient
+
+
+# Initial values
+v_0 = v_target # m/s
+u_0 = F_motor_max/4 # N
+
 
 
 def signum(a):
@@ -84,7 +88,7 @@ def v_deriv(t, v, u, **arrs):
     return (motor(v, u) - drag(v) - roll(v) - gravity() - misc(v))/m
 
 def u_deriv(t, v, u, **arrs):
-    return 0
+    return clamp(-F_motor_max, F_motor_max, regulation.pid(make_error(arrs["_v"]), dt, Kp, Ki, 0))
 
 
 t = [0]
@@ -101,9 +105,10 @@ euler.run_sim(fs, fds, names, dt, N)
 
 t = fs.pop(0)
 names.pop(0)
-for f in fs:
-    plot.plot(t, f)
+
+
+plot.plot(t, fs[0])
 
 plot.grid()
-plot.legend(["v", "u"])
+plot.legend(["v"])
 plot.show()
