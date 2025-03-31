@@ -5,43 +5,48 @@ import matplotlib.pyplot as plot
 
 import euler
 import regulation
+import interactive
+
+params = interactive.run_intro()
+
 
 # Constants
-F_motor_max = 10779
-F_misc = 80 # N
+F_motor_max = params["F_motor_max"]
+F_misc = params["F_misc"]
 
-m_car = 1979 # kg
-m_load = 150 # kg
+m_car = params["m_car"] # kg
+m_load = params["m_load"] # kg
 m = m_car + m_load # kg
 
-rho = 1.29 # kg/m³
-A = 2.5 #m²
-C_d = 0.24 
-C_r = 0.01
+rho = params["rho"] # kg/m³
+A = params["A"] #m²
+C_d = params["C_d"] 
+C_r = params["C_r"]
 
-slope = 0 # degrees
-g = 9.81 # m/s²
+slope = params["slope_degrees"] / 180 * maths.pi
+g = params["g"] # m/s²
 
 # Time parameters
-T = 300 #s
-dt = 0.01 #s
+T = params["T"] #s
+dt = params["Ts"] #s
 N = maths.ceil(T / dt) # ticks
 
 # Regulation parameters
-v_target_kmh = 70 # km/h
+v_target_kmh = params["v_target_kmh"] # km/h
 v_target = v_target_kmh / 3.6
 
-Kc = 2129 
-Ti = 2.0 # s
+Kc = params["Kc"]
+Ti = params["Ti"]
+Td = params["Td"]
 
 Kp = Kc # proportional coefficient
 Ki = Kc/Ti # integral coefficient
-Kd = 0 # derivative coefficient
+Kd = Kc*Td # derivative coefficient
 
 
 # Initial values
-v_0 = v_target # m/s
-u_0 = F_motor_max/4 # N
+v_0 = params["v_initial_kmh"] / 3.6 # m/s
+u_0 = 0 # N
 
 
 
@@ -113,9 +118,18 @@ euler.run_sim(fs, fds, names, dt, N)
 t = fs.pop(0)
 names.pop(0)
 
+# post-scaling
+v = [ e*3.6 for e in fs[0]]
+v_target_line = [v_target_kmh] * N
 
-plot.plot(t, fs[0])
+
+plot.plot(t, v)
+plot.plot(t, v_target_line)
+
+plot.title("Velocity of car")
+plot.xlabel("t / s")
+plot.ylabel("v / km/t")
 
 plot.grid()
-plot.legend(["v"])
+plot.legend(["v", "v_target"])
 plot.show()
