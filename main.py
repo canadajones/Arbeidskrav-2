@@ -12,7 +12,7 @@ F_misc = 80 # N
 
 m_car = 1979 # kg
 m_load = 150 # kg
-m = m_car + m_load
+m = m_car + m_load # kg
 
 rho = 1.29 # kg/m³
 A = 2.5 #m²
@@ -23,22 +23,22 @@ slope = 0 # degrees
 g = 9.81 # m/s²
 
 # Parameters
-T = 10 #s
+T = 60 #s
 dt = 0.01 #s
-N = maths.ceil(T / dt)
+N = maths.ceil(T / dt) # ticks
 
 
 v_target_kmh = 70 # km/h
-v_target = v_target_kmh
+v_target = v_target_kmh / 3.6
 
 v_0 = 50 # m/s
-u_0 = 0
+u_0 = 0 # N
 
-Kc = 2129
-Ti = 2.0 
+Kc = 2129 
+Ti = 2.0 # s
 
-Kp = 0.6
-Ki = 0.1
+Kp = 0.6 # proportional coefficient
+Ki = 0.1 # integral coefficient
 
 
 def signum(a):
@@ -81,11 +81,10 @@ def t_deriv(t, v, u, **arrs):
     return 1
 
 def v_deriv(t, v, u, **arrs):
-    print(t, v, u)
     return (motor(v, u) - drag(v) - roll(v) - gravity() - misc(v))/m
 
 def u_deriv(t, v, u, **arrs):
-    return regulation.pid(u, make_error(arrs["_v"]), dt, Kp, Ki, 0)
+    return 0
 
 
 t = [0]
