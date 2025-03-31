@@ -23,7 +23,7 @@ slope = 0 # degrees
 g = 9.81 # m/s²
 
 # Parameters
-T = 60 #s
+T = 120 #s
 dt = 0.01 #s
 N = maths.ceil(T / dt) # ticks
 
@@ -31,7 +31,7 @@ N = maths.ceil(T / dt) # ticks
 v_target_kmh = 70 # km/h
 v_target = v_target_kmh / 3.6
 
-v_0 = 50 # m/s
+v_0 = v_target # m/s
 u_0 = 0 # N
 
 Kc = 2129 
@@ -98,7 +98,6 @@ fds = [t_deriv, v_deriv, u_deriv]
 names = ["_t", "_v", "_u"]
 
 euler.run_sim(fs, fds, names, dt, N)
-print(u)
 
 t = fs.pop(0)
 names.pop(0)
