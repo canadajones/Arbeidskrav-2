@@ -11,18 +11,7 @@ def d(e, dt):
 
 
 def pid(e, dt, kp, ki, kd):
-	e_vals = [0]*3
-	if (len(e) < 3):
-		e_vals[-1] = e[-1]
-		e_vals[-2] = e[-1]
-		e_vals[-3] = e[-1]
-	else:
-		e_vals[-1] = e[-1]
-		e_vals[-2] = e[-2]
-		e_vals[-3] = e[-3]
-
-
-	return kp*p(e_vals, dt) + ki*i(e_vals, dt) + kd*d(e_vals, dt)
+	return kp*p(e, dt) + ki*i(e, dt) + kd*d(e, dt)
 
 
 def onoff(e):

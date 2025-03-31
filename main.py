@@ -28,15 +28,15 @@ dt = 0.01 #s
 N = maths.ceil(T / dt) # ticks
 
 # Regulation parameters
-
 v_target_kmh = 70 # km/h
 v_target = v_target_kmh / 3.6
+
 Kc = 2129 
 Ti = 2.0 # s
 
-Kp = 1.2 # proportional coefficient
-Ki = 0.5 # integral coefficient
-Kd = 2 # derivative coefficient
+Kp = Kc # proportional coefficient
+Ki = Kc/Ti # integral coefficient
+Kd = 0 # derivative coefficient
 
 
 # Initial values
@@ -46,49 +46,56 @@ u_0 = F_motor_max/4 # N
 
 
 def signum(a):
-    return 1 if a > 0 else -1
+	return 1 if a > 0 else -1
 
 def clamp(a, b, v):
-    if (v < a):
-        return a
-    if (v > b):
-        return b
-    else:
-        return v
+	if (v < a):
+		return a
+	if (v > b):
+		return b
+	else:
+		return v
 
 
 # Physical system structure
 def motor(v, u):
-    return clamp(-F_motor_max, F_motor_max, u)
+	return clamp(-F_motor_max, F_motor_max, u)
 
 def drag(v):
-    return signum(v) * 0.5 * rho * C_d * A * v**2
+	return signum(v) * 0.5 * rho * C_d * A * v**2
 
 def roll(v):
-    return signum(v) * C_r * m * g * maths.cos(slope)
+	return signum(v) * C_r * m * g * maths.cos(slope)
 
 def gravity():
-    return m * g * maths.sin(slope)
+	return m * g * maths.sin(slope)
 
 def misc(v):
-    return signum(v) * F_misc
+	return signum(v) * F_misc
+
 
 def make_error(vs):
-    e = []
-    for v in vs:
-        e.append(v_target - v)
-    return e
+	e = [0]*3
+	if (len(vs) < 3):
+		e[-1] = v_target - vs[-1]
+		e[-2] = v_target - vs[-1]
+		e[-3] = v_target - vs[-1]
+	else:
+		e[-1] = v_target - vs[-1]
+		e[-2] = v_target - vs[-2]
+		e[-3] = v_target - vs[-3]
+	return e
 
 # Derivative functions
 
 def t_deriv(t, v, u, **arrs):
-    return 1
+	return 1
 
 def v_deriv(t, v, u, **arrs):
-    return (motor(v, u) - drag(v) - roll(v) - gravity() - misc(v))/m
+	return (motor(v, u) - drag(v) - roll(v) - gravity() - misc(v))/m
 
 def u_deriv(t, v, u, **arrs):
-    return clamp(-F_motor_max, F_motor_max, regulation.pid(make_error(arrs["_v"]), dt, Kp, Ki, 0))
+	return clamp(-F_motor_max, F_motor_max, regulation.pid(make_error(arrs["_v"]), dt, Kp, Ki, Kd))
 
 
 t = [0]
