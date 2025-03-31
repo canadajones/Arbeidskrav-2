@@ -36,7 +36,7 @@ Ti = 2.0 # s
 
 Kp = 1.2 # proportional coefficient
 Ki = 0.5 # integral coefficient
-Kd = 1 # derivative coefficient
+Kd = 2 # derivative coefficient
 
 
 # Initial values
