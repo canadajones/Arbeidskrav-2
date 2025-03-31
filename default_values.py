@@ -15,5 +15,6 @@ default_params = {
 	"Kc": 2129,
 	"Ti": 2.0,
 	"Td": 0,
-	"v_initial_kmh": 70
+	"v_initial_kmh": 70,
+    "u_man": 0
 }

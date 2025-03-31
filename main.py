@@ -46,7 +46,7 @@ Kd = Kc*Td # derivative coefficient
 
 # Initial values
 v_0 = params["v_initial_kmh"] / 3.6 # m/s
-u_0 = 0 # N
+u_0 = Kp * (v_target - v_0) + params["u_man"] # N
 
 
 
